@@ -3,7 +3,10 @@ import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
-
+import { faGoogle } from "@fortawesome/free-brands-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Link } from "react-router-dom";
+import { Input } from "./Input";
 const buttonVariants = cva(
   "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
   {
@@ -54,3 +57,33 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 Button.displayName = "Button";
 
 export { Button, buttonVariants };
+export function SignInForm() {
+  return (
+    <>
+      <div className="flex items-center justify-center min-h-screen">
+        <form className="w-full max-w-md p-12 bg-slate-100 rounded-lg flex flex-col justify-center">
+          <h1 className="mb-8 font-bold">Sign In</h1>
+          <Input type="email" id="email" placeholder="Enter your email" />
+          <Input
+            type="password"
+            id="password"
+            placeholder="Enter your password"
+          />
+          <Button className="m-3">Login</Button>
+          <p>or</p>
+          <Button className="m-3">
+            {" "}
+            <FontAwesomeIcon icon={faGoogle} className="m-2" />
+            Login with Google
+          </Button>
+          <p>
+            Don't have an account?{" "}
+            <Link to="/signAppForm" className="text-blue-600">
+              Sign Up
+            </Link>
+          </p>
+        </form>
+      </div>
+    </>
+  );
+}
