@@ -5,7 +5,10 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
 import { SignAppForm } from "./components/ui/SignAppForm.tsx";
 import { NotFoundPage } from "./components/ui/NotFoundPage.tsx";
-import { SignInForm } from "./components/ui/Button.tsx";
+
+import { AuthProvider } from "./auth/AuthProvider.tsx";
+import { SignInForm } from "./components/ui/SignInForm.tsx";
+import Profile from "./components/ui/Profile.tsx";
 
 const router = createBrowserRouter([
   {
@@ -22,11 +25,17 @@ const router = createBrowserRouter([
     path: "/signinForm",
     element: <SignInForm />,
   },
+  {
+    path: "/src/components/ui/Profile.tsx",
+    element: <Profile />,
+  },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
-    {/* <App /> */}
+    <AuthProvider>
+      <RouterProvider router={router} />
+      {/* <App /> */}
+    </AuthProvider>
   </React.StrictMode>
 );
