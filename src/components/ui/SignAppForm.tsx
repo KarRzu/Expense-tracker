@@ -7,6 +7,8 @@ import { Form } from "./Form";
 import { FormEvent, useContext, useState } from "react";
 import { AuthContext } from "@/auth/AuthProvider";
 import { getFirestore, doc, setDoc } from "firebase/firestore";
+import * as Yup from "yup";
+import { toast } from "react-toastify";
 
 export function SignAppForm() {
   const { createUser } = useContext(AuthContext);
@@ -14,8 +16,27 @@ export function SignAppForm() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+  const UserSchema = Yup.object().shape({
+    email: Yup.string().email().required("Email is required"),
+    password: Yup.string()
+      .required("Password is required")
+      .min(8, "Password must be at least 8 characters")
+      .max(10)
+      .matches(
+        /[!@#$%^&*(),.?":{}|<>]/,
+        "Password must contain at least one symbol"
+      ),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref("password")], "Password must match")
+      .required("Confirm password is required"),
+  });
+
   const handleRegister = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const formData = { email, password, confirmPassword };
 
     if (password !== confirmPassword) {
       console.log("Passwords do not match");
@@ -23,6 +44,9 @@ export function SignAppForm() {
     }
 
     try {
+      await UserSchema.validate(formData, { abortEarly: false });
+      console.log("Form submitted", formData);
+
       const userCredential = await createUser(email, password); //wywołanie funkcji createUser
       console.log(userCredential.user); //Zwracany jest obiekt, który zawiera informacje o nowo utworzonym użytkowniku
 
@@ -36,7 +60,19 @@ export function SignAppForm() {
       setPassword("");
       setConfirmPassword("");
     } catch (error) {
-      console.log(error);
+      if (error instanceof Yup.ValidationError) {
+        const newError: { [key: string]: string } = {};
+
+        error.inner.forEach((err) => {
+          if (err.path) {
+            newError[err.path] = err.message;
+          }
+        });
+
+        setErrors(newError);
+      } else {
+        toast.error("Error logging in", { position: "bottom-center" });
+      }
     }
   };
 
@@ -53,6 +89,7 @@ export function SignAppForm() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
+          {errors.email && <p className="text-red-500">{errors.email}</p>}
 
           <Input
             type="password"
@@ -61,6 +98,7 @@ export function SignAppForm() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+          {errors.password && <p className="text-red-500">{errors.password}</p>}
 
           <Input
             type="password"
@@ -69,6 +107,9 @@ export function SignAppForm() {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
+          {errors.confirmPassword && (
+            <p className="text-red-500">{errors.confirmPassword}</p>
+          )}
           <Button className="m-3" type="submit">
             Register
           </Button>
