@@ -4,6 +4,7 @@ import "./App.css";
 import { SignInForm } from "./components/ui/SignInForm";
 
 function App() {
+  console.log("Dzialaaa");
   return (
     <>
       <SignInForm />

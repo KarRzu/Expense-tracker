@@ -9,29 +9,36 @@ import { AuthContext } from "@/auth/AuthProvider";
 import { getFirestore, doc, setDoc } from "firebase/firestore";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
+import { useLoginUser } from "@/auth/hooks/useLoginUser";
+import { useNavigate } from "react-router-dom";
+import { ButtonLoading } from "./ButtonLoading";
+
+const UserSchema = Yup.object().shape({
+  email: Yup.string().email().required("Email is required"),
+  password: Yup.string()
+    .required("Password is required")
+    .min(8, "Password must be at least 8 characters")
+    .max(10)
+    .matches(
+      /[!@#$%^&*(),.?":{}|<>]/,
+      "Password must contain at least one symbol"
+    ),
+  confirmPassword: Yup.string()
+    .oneOf([Yup.ref("password")], "Password must match")
+    .required("Confirm password is required"),
+});
 
 export function SignAppForm() {
-  const { createUser } = useContext(AuthContext);
+  const { createUser, isLoading } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const navigate = useNavigate();
 
+  const { handleloginUser } = useLoginUser();
+
+  console.log("Działa!!");
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-
-  const UserSchema = Yup.object().shape({
-    email: Yup.string().email().required("Email is required"),
-    password: Yup.string()
-      .required("Password is required")
-      .min(8, "Password must be at least 8 characters")
-      .max(10)
-      .matches(
-        /[!@#$%^&*(),.?":{}|<>]/,
-        "Password must contain at least one symbol"
-      ),
-    confirmPassword: Yup.string()
-      .oneOf([Yup.ref("password")], "Password must match")
-      .required("Confirm password is required"),
-  });
 
   const handleRegister = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -59,6 +66,12 @@ export function SignAppForm() {
       setEmail(""); //Resetowanie stanów pól formularza:
       setPassword("");
       setConfirmPassword("");
+
+      await handleloginUser({
+        email,
+        password,
+        navigate: () => navigate("/src/components/ui/Profile.tsx"),
+      });
     } catch (error) {
       if (error instanceof Yup.ValidationError) {
         const newError: { [key: string]: string } = {};
@@ -75,6 +88,8 @@ export function SignAppForm() {
       }
     }
   };
+
+  console.log(password);
 
   return (
     <>
@@ -110,14 +125,14 @@ export function SignAppForm() {
           {errors.confirmPassword && (
             <p className="text-red-500">{errors.confirmPassword}</p>
           )}
-          <Button className="m-3" type="submit">
+          <ButtonLoading isLoading={isLoading} className="m-3" type="submit">
             Register
-          </Button>
+          </ButtonLoading>
           <p>or</p>
-          <Button className="m-3">
+          <ButtonLoading isLoading={isLoading} className="m-3">
             <FontAwesomeIcon icon={faGoogle} className="m-2" />
             Register with Google
-          </Button>
+          </ButtonLoading>
           <p>
             Already have an account?{" "}
             <Link to="/signInForm" className="text-blue-600">
