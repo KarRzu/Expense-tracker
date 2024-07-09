@@ -1,66 +1,70 @@
-import { Link } from "react-router-dom";
-import { Button } from "./Button";
+import { Link, useNavigate } from "react-router-dom";
 import { Input } from "./Input";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 import { Form } from "./Form";
-import { FormEvent, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useLoginUser } from "@/auth/hooks/useLoginUser";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { ButtonLoading } from "./ButtonLoading";
+import { useForm } from "react-hook-form";
+import {
+  LoginFormData,
+  LoginSchema,
+} from "../components/features/sign-up/validation";
+
+import { useLoginUser } from "@/auth/hooks/useLoginUser";
 
 export function SignInForm() {
+  console.log("komponent");
   const navigate = useNavigate();
   const { handleloginUser, isLoading } = useLoginUser();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<LoginFormData>({
+    resolver: yupResolver(LoginSchema),
+  });
 
-  console.log("Sign In dziala");
-  // const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const onSubmit = async (data: LoginFormData) => {
+    console.log("wywoluje se");
+    try {
+      await handleloginUser({
+        email: data.email,
+        password: data.password,
+        navigate: () => navigate("/src/components/ui/Profile.tsx"),
+      });
 
-  // const UserSchema = Yup.object().shape({
-  //   email: Yup.string().email().required("Email is required"),
-  //   password: Yup.string()
-  //     .required("Password is required")
-  //     .min(8, "Password must be at least 8 characters")
-  //     .max(10)
-  //     .matches(
-  //       /[!@#$%^&*(),.?":{}|<>]/,
-  //       "Password must contain at least one symbol"
-  //     ),
-  // });
-
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    await handleloginUser({
-      email,
-      password,
-      navigate: () => navigate("/src/components/ui/Profile.tsx"),
-    });
+      reset();
+    } catch (error) {
+      console.error("Error logging in:", error);
+    }
   };
-
   return (
     <>
       <div className="flex items-center justify-center min-h-screen">
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={handleSubmit(onSubmit)}>
           <h1 className="mb-8 font-bold">Sign In</h1>
           <Input
+            {...register("email")}
             type="email"
             id="email"
             placeholder="Enter your email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
           />
-          {/* {errors.email && <p className="text-red-500">{errors.email}</p>} */}
+          {errors.email && (
+            <p className="text-red-500">{`${errors.email.message}`}</p>
+          )}
+
           <Input
+            {...register("password")}
             type="password"
             id="password"
             placeholder="Enter your password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
           />
-          {/* {errors.password && <p className="text-red-500">{errors.password}</p>} */}
+          {errors.password && (
+            <p className="text-red-500">{`${errors.password.message}`}</p>
+          )}
+
           <ButtonLoading isLoading={isLoading} className="m-3" type="submit">
             Login
           </ButtonLoading>
