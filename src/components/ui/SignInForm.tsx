@@ -14,7 +14,6 @@ import {
 import { useLoginUser } from "@/auth/hooks/useLoginUser";
 
 export function SignInForm() {
-  console.log("komponent");
   const navigate = useNavigate();
   const { handleloginUser, isLoading } = useLoginUser();
   const {
@@ -27,7 +26,6 @@ export function SignInForm() {
   });
 
   const onSubmit = async (data: LoginFormData) => {
-    console.log("wywoluje se");
     try {
       await handleloginUser({
         email: data.email,

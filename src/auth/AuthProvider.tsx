@@ -15,8 +15,8 @@ export type AuthProviderProps = {
 };
 
 export type AuthContextValue = {
-  createUser: (email: string, password: string) => Promise<UserCredential>;
-  loginUser: (email: string, password: string) => Promise<UserCredential>;
+  createUser: (email: string, password: string) => Promise<void>;
+  loginUser: (email: string, password: string) => Promise<void>;
   logOut: () => Promise<void>;
   user: User | null;
   isLoading: boolean;
@@ -53,15 +53,35 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  function createUser(email: string, password: string) {
+  async function createUser(email: string, password: string) {
     setIsLoading(true);
-    return createUserWithEmailAndPassword(auth, email, password);
+
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+
     //Ustawia isLoading na true i wywołuje createUserWithEmailAndPassword z Firebase, co tworzy nowego użytkownika z podanym e-mailem i hasłem.
   }
 
-  function loginUser(email: string, password: string) {
+  async function loginUser(email: string, password: string) {
     setIsLoading(true);
-    return signInWithEmailAndPassword(auth, email, password);
+
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      setUser(userCredential.user);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   function logOut() {
@@ -72,17 +92,17 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   //Monitorowanie stanu uwierzytelnienia
   //useEffect: Hook Reacta, który wykonuje efekt uboczny po renderowaniu komponentu.
   //onAuthStateChanged: Funkcja Firebase, która nasłuchuje zmiany stanu uwierzytelnienia (np. logowanie, wylogowywanie)
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (newUser) => {
-      setUser(newUser);
-      setIsLoading(false);
-    });
+  // useEffect(() => {
+  //   const unsubscribe = onAuthStateChanged(auth, (newUser) => {
+  //     setUser(newUser);
+  //     setIsLoading(false);
+  //   });
 
-    //unsubscribe: Funkcja zwrotna, która usuwa nasłuchiwacza zmian stanu, gdy komponent AuthProvider jest odmontowywany.
-    return () => {
-      unsubscribe();
-    };
-  }, []);
+  //   //unsubscribe: Funkcja zwrotna, która usuwa nasłuchiwacza zmian stanu, gdy komponent AuthProvider jest odmontowywany.
+  //   return () => {
+  //     unsubscribe();
+  //   };
+  // }, []);
 
   const authContextValue: AuthContextValue = {
     createUser,
