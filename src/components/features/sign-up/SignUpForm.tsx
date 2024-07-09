@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
-import { Input } from "../../../ui/Input";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
-import { Form } from "../../../ui/Form";
+
 import { useContext } from "react";
 import { AuthContext } from "@/auth/AuthProvider";
 import { getFirestore, doc, setDoc } from "firebase/firestore";
@@ -10,10 +10,13 @@ import * as Yup from "yup";
 import { toast } from "react-toastify";
 import { useLoginUser } from "@/auth/hooks/useLoginUser";
 import { useNavigate } from "react-router-dom";
-import { ButtonLoading } from "../../../ui/ButtonLoading";
+
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { RegistrationSchema } from "./validation";
+import { Input } from "@/components/shared/form/Input";
+import { Form } from "@/components/shared/form/Form";
+import { ButtonLoading } from "@/components/shared/buttons/ButtonLoading";
 
 // Typ danych formularza
 type SignInFormData = {

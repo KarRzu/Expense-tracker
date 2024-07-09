@@ -1,8 +1,8 @@
 import { useContext } from "react";
-import { Button } from "./Button";
 import { AuthContext } from "@/auth/AuthProvider";
 import { getAuth, signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/shared/buttons/Button";
 
 function Profile() {
   const navigate = useNavigate();

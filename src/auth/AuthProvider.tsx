@@ -2,12 +2,12 @@ import {
   User,
   UserCredential, //typ, który zawiera informacje o uwierzytelnieniu użytkownika
   createUserWithEmailAndPassword, //Funkcja, która tworzy nowego użytkownika z wykorzystaniem adresu e-mail i hasła
-  onAuthStateChanged, ///Funkcja, która rejestruje obserwatora zmian stanu uwierzytelnienia. Obserwator jest wywoływany za każdym razem,
+  ///Funkcja, która rejestruje obserwatora zmian stanu uwierzytelnienia. Obserwator jest wywoływany za każdym razem,
   //gdy stan uwierzytelnienia użytkownika się zmienia (np. użytkownik loguje się lub wylogowuje)
   signInWithEmailAndPassword, //Funkcja, która loguje użytkownika za pomocą adresu e-mail i hasła
   signOut, //Funkcja, która wylogowywuje użytkownika
 } from "firebase/auth";
-import { ReactNode, createContext, useEffect, useState } from "react";
+import { ReactNode, createContext, useState } from "react";
 import auth from "../../firebaseConfig";
 
 export type AuthProviderProps = {
@@ -15,7 +15,7 @@ export type AuthProviderProps = {
 };
 
 export type AuthContextValue = {
-  createUser: (email: string, password: string) => Promise<void>;
+  createUser: (email: string, password: string) => Promise<UserCredential>;
   loginUser: (email: string, password: string) => Promise<void>;
   logOut: () => Promise<void>;
   user: User | null;
@@ -28,14 +28,11 @@ const defaultAuthContextValue: AuthContextValue = {
     password: string
   ): Promise<UserCredential> => {
     // Domyślna implementacja, np. zwrócenie pustego obiektu
-    return {} as UserCredential;
+    return {} as void;
   },
-  loginUser: async (
-    email: string,
-    password: string
-  ): Promise<UserCredential> => {
+  loginUser: async (email: string, password: string): Promise<void> => {
     // Domyślna implementacja, np. zwrócenie pustego obiektu
-    return {} as UserCredential;
+    return {} as void;
   },
   logOut: async (): Promise<void> => {
     // Domyślna implementacja
@@ -57,7 +54,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setIsLoading(true);
 
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      return await createUserWithEmailAndPassword(auth, email, password);
     } catch (error) {
       console.log(error);
     } finally {

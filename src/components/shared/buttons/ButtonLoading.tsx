@@ -1,7 +1,7 @@
 import { Loader2 } from "lucide-react";
 
-import { Button } from "@/components/ui/Button";
 import { ComponentProps, ReactNode } from "react";
+import { Button } from "./Button";
 
 type ButtonloadingProps = ComponentProps<typeof Button> & {
   children: ReactNode;

@@ -1,17 +1,17 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Input } from "./Input";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
-import { Form } from "./Form";
+
 import { yupResolver } from "@hookform/resolvers/yup";
-import { ButtonLoading } from "./ButtonLoading";
+
 import { useForm } from "react-hook-form";
-import {
-  LoginFormData,
-  LoginSchema,
-} from "../components/features/sign-up/validation";
 
 import { useLoginUser } from "@/auth/hooks/useLoginUser";
+import { Input } from "@/components/shared/form/Input";
+import { Form } from "@/components/shared/form/Form";
+import { ButtonLoading } from "@/components/shared/buttons/ButtonLoading";
+import { LoginFormData, LoginSchema } from "../sign-up/validation";
 
 export function SignInForm() {
   const navigate = useNavigate();
