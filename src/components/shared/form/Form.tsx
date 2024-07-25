@@ -9,7 +9,7 @@ export function Form({ children, onSubmit }: FormProps) {
   return (
     <form
       onSubmit={onSubmit}
-      className="w-full h-[36rem] max-w-md p-12 bg-slate-200 rounded-lg flex flex-col justify-center"
+      className="w-full h-auto max-w-md p-4 flex flex-col justify-center"
     >
       {children}
     </form>

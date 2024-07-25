@@ -69,53 +69,51 @@ export function SignUpForm() {
   };
 
   return (
-    <div className="flex items-center justify-center">
-      <Form onSubmit={handleSubmit(onSubmit)}>
-        <h1 className="mb-8 font-bold">Sign Up</h1>
+    <Form onSubmit={handleSubmit(onSubmit)}>
+      <h1 className="mb-8 font-bold">Sign Up</h1>
 
-        <Input
-          {...register("email")}
-          type="email"
-          id="email"
-          placeholder="Enter your email"
-        />
-        {errors.email && <p className="text-red-500">{errors.email.message}</p>}
+      <Input
+        {...register("email")}
+        type="email"
+        id="email"
+        placeholder="Enter your email"
+      />
+      {errors.email && <p className="text-red-500">{errors.email.message}</p>}
 
-        <Input
-          {...register("password")}
-          type="password"
-          id="password"
-          placeholder="Enter your password"
-        />
-        {errors.password && (
-          <p className="text-red-500">{errors.password.message}</p>
-        )}
+      <Input
+        {...register("password")}
+        type="password"
+        id="password"
+        placeholder="Enter your password"
+      />
+      {errors.password && (
+        <p className="text-red-500">{errors.password.message}</p>
+      )}
 
-        <Input
-          {...register("confirmPassword")}
-          type="password"
-          id="confirmPassword"
-          placeholder="Confirm your password"
-        />
-        {errors.confirmPassword && (
-          <p className="text-red-500">{errors.confirmPassword.message}</p>
-        )}
+      <Input
+        {...register("confirmPassword")}
+        type="password"
+        id="confirmPassword"
+        placeholder="Confirm your password"
+      />
+      {errors.confirmPassword && (
+        <p className="text-red-500">{errors.confirmPassword.message}</p>
+      )}
 
-        <ButtonLoading isLoading={isLoading} className="m-3" type="submit">
-          Register
-        </ButtonLoading>
-        <p>or</p>
-        <ButtonLoading isLoading={isLoading} className="m-3">
-          <FontAwesomeIcon icon={faGoogle} className="m-2" />
-          Register with Google
-        </ButtonLoading>
-        <p>
-          Already have an account?{" "}
-          <Link to="/signInForm" className="text-blue-600">
-            Login
-          </Link>
-        </p>
-      </Form>
-    </div>
+      <ButtonLoading isLoading={isLoading} className="m-3" type="submit">
+        Register
+      </ButtonLoading>
+      <p>or</p>
+      <ButtonLoading isLoading={isLoading} className="m-3">
+        <FontAwesomeIcon icon={faGoogle} className="m-2" />
+        Register with Google
+      </ButtonLoading>
+      <p>
+        Already have an account?{" "}
+        <Link to="/sign-in" className="text-blue-600">
+          Login
+        </Link>
+      </p>
+    </Form>
   );
 }
